@@ -24,8 +24,8 @@ fi
 
 cd "$configuration_directory"
 
-SUFFIX=$(printf "%03d" $NETWORK_CARD_INDEX)$(printf "%02d" $DEVICE_NUMBER)
-ROUTE_TABLE="$(( $SUFFIX + 10 ))"
+SUFFIX=$NETWORK_CARD_INDEX$(printf "%02d" $DEVICE_NUMBER)
+ROUTE_TABLE="$(( $SUFFIX + 1000 ))"
 
 ln -s /usr/lib/systemd/network/80-ec2.network ${file_name} # Use default EC2 configuration. This include MTU, etc.
 

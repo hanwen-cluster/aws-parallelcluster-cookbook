@@ -24,8 +24,8 @@ then
 fi
 
 con_name="System ${DEVICE_NAME}"
-SUFFIX=$(printf "%03d" $NETWORK_CARD_INDEX)$(printf "%02d" $DEVICE_NUMBER)
-route_table="$(( $SUFFIX + 10 ))"
+SUFFIX=$NETWORK_CARD_INDEX$(printf "%02d" $DEVICE_NUMBER)
+route_table="$(( $SUFFIX + 1000 ))"
 priority="${route_table}"
 metric="${route_table}"
 
