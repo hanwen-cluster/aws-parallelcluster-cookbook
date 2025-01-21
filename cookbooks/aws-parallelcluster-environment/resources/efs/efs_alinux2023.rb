@@ -21,7 +21,7 @@ use 'partial/_common'
 use 'partial/_mount_umount'
 
 action :install_utils do
-  package_name = "amazon-efs-utils"
+  package_name = "amazon-efs-utils-#{new_resource.efs_utils_version}"
 
   # Do not install efs-utils if a same or newer version is already installed.
   return if already_installed?(package_name, new_resource.efs_utils_version)

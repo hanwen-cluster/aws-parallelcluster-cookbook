@@ -47,16 +47,12 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         name:
-          - Python 3.7 Tests
           - Python 3.8 Tests
           - Python 3.9 Tests
           - Python 3.10 Tests
           - Python 3.10 Tests Coverage
           - Code Checks
         include:
-          - name: Python 3.7 Tests
-            python: 3.7
-            toxenv: py37-nocov
           - name: Python 3.8 Tests
             python: 3.8
             toxenv: py38-nocov

@@ -21,7 +21,3 @@ use 'partial/_common'
 use 'partial/_redhat_based'
 use 'partial/_install_from_tar'
 use 'partial/_mount_umount'
-
-def prerequisites
-  %w(rpm-build make)
-end

@@ -62,7 +62,7 @@ describe 'efs:install_utils' do
 
       it 'installs amazon-efs-utils' do
         is_expected.to install_utils_efs('install_utils')
-        is_expected.to install_package('amazon-efs-utils').with(retries: 3).with(retry_delay: 5)
+        is_expected.to install_package('amazon-efs-utils-1.2.3').with(retries: 3).with(retry_delay: 5)
       end
     end
 
@@ -73,7 +73,7 @@ describe 'efs:install_utils' do
       end
 
       it 'installs amazon-efs-utils' do
-        is_expected.to install_package('amazon-efs-utils').with(retries: 3).with(retry_delay: 5)
+        is_expected.to install_package('amazon-efs-utils-1.2.3').with(retries: 3).with(retry_delay: 5)
       end
     end
   end
@@ -179,8 +179,8 @@ describe 'efs:install_utils' do
       end
       cached(:required_packages) do
         {
-          "redhat" => %w(rpm-build make),
-          "rocky" => %w(rpm-build make),
+          "redhat" => %w(rpm-build make rust cargo openssl-devel),
+          "rocky" => %w(rpm-build make rust cargo openssl-devel),
         }
       end
 

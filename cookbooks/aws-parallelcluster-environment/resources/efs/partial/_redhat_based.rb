@@ -22,3 +22,7 @@ def install_script_code(efs_utils_tarball, efs_utils_package, efs_utils_version)
       yum -y install ./build/#{efs_utils_package}*rpm
   EFSUTILSINSTALL
 end
+
+def prerequisites
+  %w(rpm-build make rust cargo openssl-devel)
+end
