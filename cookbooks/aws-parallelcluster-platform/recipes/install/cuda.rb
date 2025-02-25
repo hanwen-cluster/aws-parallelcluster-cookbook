@@ -27,8 +27,8 @@ cuda_arch = arm_instance? ? 'linux_sbsa' : 'linux'
 cuda_url = "#{node['cluster']['artifacts_s3_url']}/dependencies/cuda/cuda_#{cuda_complete_version}_#{cuda_version_suffix}_#{cuda_arch}.run"
 cuda_samples_version = '12.4'
 cuda_samples_url = "#{node['cluster']['artifacts_s3_url']}/dependencies/cuda/samples/v#{cuda_samples_version}.tar.gz"
-tmp_cuda_run = '/tmp/cuda.run'
-tmp_cuda_sample_archive = '/tmp/cuda-sample.tar.gz'
+tmp_cuda_run = "#{node['cluster']['tmp_dir']}/cuda.run"
+tmp_cuda_sample_archive = "#{node['cluster']['tmp_dir']}/cuda-sample.tar.gz"
 
 node.default['cluster']['nvidia']['cuda']['version'] = cuda_version
 node.default['cluster']['nvidia']['cuda_samples_version'] = cuda_samples_version
@@ -47,13 +47,13 @@ end
 bash 'cuda.run advanced' do
   user 'root'
   group 'root'
-  cwd '/tmp'
+  cwd node['cluster']['tmp_dir']
   code <<-CUDA
     set -e
     mkdir /cuda-install
     ./cuda.run --silent --toolkit --samples --tmpdir=/cuda-install
     rm -rf /cuda-install
-    rm -f /tmp/cuda.run
+    rm -f #{node['cluster']['tmp_dir']}/cuda.run
   CUDA
   creates "/usr/local/cuda-#{cuda_version}"
 end
@@ -71,11 +71,11 @@ end
 bash 'cuda.sample install' do
   user 'root'
   group 'root'
-  cwd '/tmp'
+  cwd node['cluster']['tmp_dir']
   code <<-CUDA
     set -e
-    tar xf "/tmp/cuda-sample.tar.gz" --directory "/usr/local/"
-    rm -f "/tmp/cuda-sample.tar.gz"
+    tar xf "#{node['cluster']['tmp_dir']}/cuda-sample.tar.gz" --directory "/usr/local/"
+    rm -f "#{node['cluster']['tmp_dir']}/cuda-sample.tar.gz"
   CUDA
   creates "/usr/local/cuda-#{cuda_version}/samples"
 end

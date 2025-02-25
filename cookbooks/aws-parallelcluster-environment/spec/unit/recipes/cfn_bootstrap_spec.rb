@@ -46,7 +46,7 @@ describe 'aws-parallelcluster-environment::cfn_bootstrap' do
         end
 
         it 'downloads cfn_bootstrap package from s3' do
-          is_expected.to create_remote_file("/tmp/#{cfnbootstrap_package}").with(
+          is_expected.to create_remote_file("#{node['cluster']['tmp_dir']}/#{cfnbootstrap_package}").with(
             source: "https://s3.amazonaws.com/cloudformation-examples/#{cfnbootstrap_package}"
           )
         end
@@ -55,7 +55,7 @@ describe 'aws-parallelcluster-environment::cfn_bootstrap' do
           is_expected.to run_bash("Install CloudFormation helpers from #{cfnbootstrap_package}").with(
             user: 'root',
             group: 'root',
-            cwd: '/tmp',
+            cwd: node['cluster']['tmp_dir'],
             code: "#{virtualenv_path}/bin/pip install #{cfnbootstrap_package}",
             creates: "#{virtualenv_path}/bin/cfn-hup"
           )
@@ -111,7 +111,7 @@ describe 'aws-parallelcluster-environment::cfn_bootstrap' do
           runner.converge(described_recipe)
         end
         it 'downloads cfn_bootstrap package from a different s3 bucket' do
-          is_expected.to create_remote_file("/tmp/#{cfnbootstrap_package}").with(
+          is_expected.to create_remote_file("#{node['cluster']['tmp_dir']}/#{cfnbootstrap_package}").with(
             source: "https://s3.cn-north-1.amazonaws.com.cn/cn-north-1-aws-parallelcluster/cloudformation-examples/#{cfnbootstrap_package}"
           )
         end

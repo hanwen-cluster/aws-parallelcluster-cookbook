@@ -15,7 +15,7 @@
 
 action :setup do
   mysql_archive_url = package_archive(node['cluster']['artifacts_s3_url'])
-  mysql_tar_file = "/tmp/#{package_filename}"
+  mysql_tar_file = "#{node['cluster']['tmp_dir']}/#{package_filename}"
 
   log "Downloading MySQL packages archive from #{mysql_archive_url}"
 
@@ -33,7 +33,7 @@ action :setup do
   bash 'Install MySQL packages' do
     user 'root'
     group 'root'
-    cwd '/tmp'
+    cwd node['cluster']['tmp_dir']
     code <<-MYSQL
         set -e
 

@@ -17,7 +17,7 @@ default_action :setup
 
 property :nvidia_driver_version, String
 
-tmp_nvidia_run = '/tmp/nvidia.run'
+tmp_nvidia_run = "#{node['cluster']['tmp_dir']}/nvidia.run"
 
 action :setup do
   return unless nvidia_driver_enabled?
@@ -76,11 +76,11 @@ action :setup do
   bash 'nvidia.run advanced' do
     user 'root'
     group 'root'
-    cwd '/tmp'
+    cwd node['cluster']['tmp_dir']
     code <<-NVIDIA
       set -e
       #{compiler_path} ./nvidia.run --silent --dkms --disable-nouveau -m=#{nvidia_kernel_module}
-      rm -f /tmp/nvidia.run
+      rm -f #{node['cluster']['tmp_dir']}/nvidia.run
     NVIDIA
     creates '/usr/bin/nvidia-smi'
   end

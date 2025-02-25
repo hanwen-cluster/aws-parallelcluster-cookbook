@@ -54,8 +54,8 @@ describe 'aws-parallelcluster-slurm::install_pyxis' do
           retry_delay: 5,
           code: <<-CODE
     set -e
-    tar xf #{cluster_sources_dir}/pyxis-#{pyxis_version}.tar.gz -C /tmp
-    cd /tmp/pyxis-#{pyxis_version}
+    tar xf #{cluster_sources_dir}/pyxis-#{pyxis_version}.tar.gz -C #{node['cluster']['tmp_dir']}
+    cd #{node['cluster']['tmp_dir']}/pyxis-#{pyxis_version}
     CPPFLAGS='-I #{slurm_install_dir}/include/' make
     CPPFLAGS='-I #{slurm_install_dir}/include/' make install
           CODE

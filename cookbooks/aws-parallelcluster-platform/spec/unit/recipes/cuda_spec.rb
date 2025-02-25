@@ -39,7 +39,7 @@ describe 'aws-parallelcluster-platform::cuda' do
     end
 
     it 'downloads CUDA run file' do
-      is_expected.to create_remote_file('/tmp/cuda.run').with(
+      is_expected.to create_remote_file("#{node['cluster']['tmp_dir']}/cuda.run").with(
         source: cuda_url,
         mode: '0755',
         retries: 3,
@@ -53,16 +53,16 @@ describe 'aws-parallelcluster-platform::cuda' do
         .with(
           user: 'root',
           group: 'root',
-          cwd: '/tmp',
+          cwd: node['cluster']['tmp_dir'],
           creates: "/usr/local/cuda-#{cuda_version}")
         .with_code(%r{mkdir /cuda-install})
         .with_code(%r{./cuda.run --silent --toolkit --samples --tmpdir=/cuda-install})
         .with_code(%r{rm -rf /cuda-install})
-        .with_code(%r{rm -f /tmp/cuda.run})
+        .with_code(%r{rm -f #{node['cluster']['tmp_dir']}/cuda.run})
     end
 
     it 'downloads CUDA sample files' do
-      is_expected.to create_remote_file('/tmp/cuda-sample.tar.gz').with(
+      is_expected.to create_remote_file("#{node['cluster']['tmp_dir']}/cuda-sample.tar.gz").with(
         source: cuda_samples_url,
         mode: '0644',
         retries: 3,
@@ -75,9 +75,9 @@ describe 'aws-parallelcluster-platform::cuda' do
         .with(
           user: 'root',
           group: 'root',
-          cwd: '/tmp')
-        .with_code(%r{tar xf "/tmp/cuda-sample.tar.gz" --directory "/usr/local/"})
-        .with_code(%r{rm -f "/tmp/cuda-sample.tar.gz"})
+          cwd: node['cluster']['tmp_dir'])
+        .with_code(%r{tar xf "#{node['cluster']['tmp_dir']}/cuda-sample.tar.gz" --directory "/usr/local/"})
+        .with_code(%r{rm -f "#{node['cluster']['tmp_dir']}/cuda-sample.tar.gz"})
     end
   end
 
@@ -95,7 +95,7 @@ describe 'aws-parallelcluster-platform::cuda' do
     cached(:node) { chef_run.node }
 
     it 'downloads CUDA run file' do
-      is_expected.to create_remote_file('/tmp/cuda.run').with_source(cuda_url)
+      is_expected.to create_remote_file("#{node['cluster']['tmp_dir']}/cuda.run").with_source(cuda_url)
     end
   end
 end

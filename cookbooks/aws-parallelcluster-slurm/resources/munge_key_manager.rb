@@ -74,7 +74,7 @@ def generate_munge_key
   declare_resource(:bash, 'generate_munge_key') do
     user node['cluster']['munge']['user']
     group node['cluster']['munge']['group']
-    cwd '/tmp'
+    cwd node['cluster']['tmp_dir']
     code <<-GENERATE_KEY
       set -e
       /usr/sbin/mungekey --verbose --force

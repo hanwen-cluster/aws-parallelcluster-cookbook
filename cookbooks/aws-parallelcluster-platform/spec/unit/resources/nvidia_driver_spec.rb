@@ -198,7 +198,7 @@ describe 'nvidia_driver:setup' do
         end
 
         it 'downloads nvidia driver' do
-          is_expected.to create_remote_file('/tmp/nvidia.run').with(
+          is_expected.to create_remote_file("#{node['cluster']['tmp_dir']}/nvidia.run").with(
             source: nvidia_driver_url,
             mode: '0755',
             retries: 3,
@@ -241,11 +241,11 @@ describe 'nvidia_driver:setup' do
               .with(
                 user: 'root',
                 group: 'root',
-                cwd: '/tmp',
+                cwd: node['cluster']['tmp_dir'],
                 creates: '/usr/bin/nvidia-smi'
               )
               .with_code(%r{CC=/usr/bin/gcc10-gcc ./nvidia.run --silent --dkms --disable-nouveau -m=#{kernel_module}})
-              .with_code(%r{rm -f /tmp/nvidia.run})
+              .with_code(%r{rm -f #{node['cluster']['tmp_dir']}/nvidia.run})
           end
         elsif platform == 'ubuntu' && version == '22.04'
           it 'installs gcc' do
@@ -269,7 +269,7 @@ describe 'nvidia_driver:setup' do
               .with(
                                user: 'root',
                                group: 'root',
-                               cwd: '/tmp',
+                               cwd: node['cluster']['tmp_dir'],
                                creates: '/usr/bin/nvidia-smi'
                              )
               .with_code(%r{#{compiler_path} ./nvidia.run --silent --dkms --disable-nouveau -m=#{kernel_module}})
@@ -283,11 +283,11 @@ describe 'nvidia_driver:setup' do
               .with(
                 user: 'root',
                 group: 'root',
-                cwd: '/tmp',
+                cwd: node['cluster']['tmp_dir'],
                 creates: '/usr/bin/nvidia-smi'
               )
               .with_code(%r{./nvidia.run --silent --dkms --disable-nouveau -m=#{kernel_module}})
-              .with_code(%r{rm -f /tmp/nvidia.run})
+              .with_code(%r{rm -f #{node['cluster']['tmp_dir']}/nvidia.run})
           end
         end
 

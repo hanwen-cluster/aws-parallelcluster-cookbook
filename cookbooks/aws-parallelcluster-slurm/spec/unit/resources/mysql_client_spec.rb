@@ -46,7 +46,7 @@ describe 'mysql_client:setup' do
           end
         end
         cached(:package_archive) { "#{s3_url}/mysql/#{package_platform}/#{package_filename}" }
-        cached(:tarfile) { "/tmp/mysql-community-client-#{package_version}.tar.gz" }
+        cached(:tarfile) { "#{node['cluster']['tmp_dir']}/mysql-community-client-#{package_version}.tar.gz" }
         cached(:repository_packages) do
           if platform == 'ubuntu'
             if version.to_i == 18
@@ -87,7 +87,7 @@ describe 'mysql_client:setup' do
             is_expected.to run_bash('Install MySQL packages')
               .with(user: 'root')
               .with(group: 'root')
-              .with(cwd: '/tmp')
+              .with(cwd: node['cluster']['tmp_dir'])
               .with(code: %{        set -e
 
         EXTRACT_DIR=$(mktemp -d --tmpdir mysql.XXXXXXX)
