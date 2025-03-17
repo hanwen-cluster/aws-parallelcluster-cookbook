@@ -16,9 +16,26 @@ fi
 
 # https://bugs.centos.org/view.php?id=13836#c33128
 source /etc/os-release
-if [ "${ID}${VERSION_ID}" == "centos7" ]; then
-    rm -f /etc/sysconfig/network-scripts/ifcfg-eth0
-fi
 
+systemctl stop rsyslog
+systemctl stop systemd-journald
+
+# Clean journals
+journalctl --rotate
+journalctl --vacuum-time=1s
+rm -rf /var/log/journal/*
+
+# Clean logs
 find /var/log -type f -exec /bin/rm -v {} \;
 touch /var/log/lastlog
+
+# Clean instance-specific data
+rm -rf /var/lib/cloud/*
+rm -rf /var/lib/dhcp/*
+
+# Reset systemd
+systemctl daemon-reexec
+
+# Restart logging
+systemctl start systemd-journald
+systemctl start rsyslog
