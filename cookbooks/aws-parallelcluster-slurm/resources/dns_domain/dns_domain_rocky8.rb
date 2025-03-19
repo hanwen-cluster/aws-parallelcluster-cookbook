@@ -34,9 +34,9 @@ action :configure do
   end
 
   # Disable ipv6 IMDS in cloud init to speed up
-  cookbook_file '99-disable-ipv6-metadata.cfg' do
-    path '/etc/cloud/cloud.cfg.d/99-disable-ipv6-metadata.cfg'
-    source 'dns_domain/99-disable-ipv6-metadata.cfg'
+  cookbook_file '01_parallelcluster.cfg' do
+    path '/etc/cloud/cloud.cfg.d/01_parallelcluster.cfg'
+    source 'dns_domain/01_parallelcluster.cfg'
     cookbook 'aws-parallelcluster-slurm'
     user 'root'
     group 'root'
