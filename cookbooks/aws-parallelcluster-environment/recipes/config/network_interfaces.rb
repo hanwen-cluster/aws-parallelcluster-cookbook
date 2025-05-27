@@ -62,6 +62,16 @@ token = get_metadata_token
 macs = network_interface_macs(token)
 log "macs: #{macs}"
 
+if platform?('ubuntu')
+  cookbook_file '99-use-networkd.yaml' do
+    source 'network_interfaces/99-use-networkd.yaml'
+    path '/etc/netplan/99-use-networkd.yaml'
+    user 'root'
+    group 'root'
+    mode '0644'
+  end
+end
+
 if macs.length > 1
 
   cookbook_file 'configure_nw_interface.sh' do

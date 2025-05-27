@@ -44,9 +44,10 @@ action_class do
       # Run dpkg --configure -a if there is a `dpkg interrupted` issue when installing ubuntu-desktop
       code <<-PREREQ
         set -e
+        apt-mark hold network-manager*
         DEBIAN_FRONTEND=noninteractive
         apt -y install whoopsie
-        apt -y install ubuntu-desktop && apt -y install mesa-utils || (dpkg --configure -a && exit 1)
+        apt -y install ubuntu-desktop-minimal && apt -y install mesa-utils || (dpkg --configure -a && exit 1)
         apt -y purge ifupdown
         wget https://d1uj6qtbmh3dt5.cloudfront.net/NICE-GPG-KEY
         gpg --import NICE-GPG-KEY
