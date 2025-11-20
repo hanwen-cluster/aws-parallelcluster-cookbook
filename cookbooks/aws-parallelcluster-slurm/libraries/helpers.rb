@@ -167,13 +167,8 @@ end
 def wait_cluster_ready
   return if on_docker? || kitchen_test? && !node['interact_with_ddb']
   execute "Check cluster readiness" do
-    command "#{cookbook_virtualenv_path}/bin/python #{node['cluster']['scripts_dir']}/head_node_checks/check_cluster_ready.py" \
-              " --cluster-name #{node['cluster']['stack_name']}" \
-              " --table-name parallelcluster-#{node['cluster']['stack_name']}" \
-              " --config-version #{node['cluster']['cluster_config_version']}" \
-              " --region #{node['cluster']['region']}"
+    command "exit 1"
     timeout 30
-    retries 10
     retry_delay 90
   end
 end
