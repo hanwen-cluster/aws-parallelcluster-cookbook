@@ -1,4 +1,3 @@
-** iptables cookbook -- https://github.com/sous-chefs/iptables
 ** line cookbook -- https://github.com/sous-chefs/line
 ** NFS cookbook -- https://github.com/sous-chefs/nfs
 ** openssh cookbook -- https://github.com/sous-chefs/openssh
@@ -204,8 +203,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-* For iptables cookbook see also this required NOTICE:
-    Copyright: 2008-2020, Chef Software, Inc.
 * For line cookbook see also this required NOTICE:
     Copyright: 2017-2019 Sous Chefs
 * For NFS cookbook see also this required NOTICE:

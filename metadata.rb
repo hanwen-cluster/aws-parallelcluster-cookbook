@@ -9,7 +9,6 @@ source_url 'https://github.com/aws/aws-parallelcluster-cookbook'
 chef_version '>= 18'
 version '3.15.0'
 
-depends 'iptables', '~> 8.0.0'
 depends 'line', '~> 4.5.21'
 depends 'nfs', '~> 5.1.5'
 depends 'openssh', '~> 2.11.14'
