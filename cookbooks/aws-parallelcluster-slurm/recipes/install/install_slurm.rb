@@ -30,10 +30,7 @@ slurm_tar_name = if !slurm_commit.empty?
                    "slurm-#{slurm_version}"
                  end
 slurm_tarball = "#{node['cluster']['sources_dir']}/#{slurm_tar_name}.tar.gz"
-slurm_url = "#{node['cluster']['slurm']['base_url']}/#{slurm_tar_name}.tar.gz"
-slurm_sha256 = if slurm_branch.empty?
-                 node['cluster']['slurm']['sha256']
-               end
+slurm_url = "#{node['cluster']['slurm']['base_url']}/#{slurm_tar_name}"
 
 include_recipe 'aws-parallelcluster-slurm::slurm_users'
 
@@ -43,7 +40,6 @@ remote_file slurm_tarball do
   mode '0644'
   retries 3
   retry_delay 5
-  checksum slurm_sha256
   action :create_if_missing
 end
 
@@ -87,7 +83,8 @@ bash 'make install' do
     source #{cookbook_virtualenv_path}/bin/activate
 
     tar xf #{slurm_tarball}
-    cd slurm-#{slurm_tar_name}
+    # GitHub tarballs extract to SchedMD-slurm-*, S3 tarballs to slurm-*
+    cd $(tar tf #{slurm_tarball} | head -1 | cut -d/ -f1)
 
     # Apply possible Slurm patches
     shopt -s nullglob  # with this an empty slurm_patches directory does not trigger the loop
@@ -123,7 +120,7 @@ bash 'copy license stuff' do
   cwd Chef::Config[:file_cache_path]
   code <<-SLURMLICENSE
     set -e
-    cd slurm-#{slurm_tar_name}
+    cd $(tar tf #{slurm_tarball} | head -1 | cut -d/ -f1)
     cp -v COPYING #{node['cluster']['license_dir']}/slurm/COPYING
     cp -v DISCLAIMER #{node['cluster']['license_dir']}/slurm/DISCLAIMER
     cp -v LICENSE.OpenSSL #{node['cluster']['license_dir']}/slurm/LICENSE.OpenSSL
