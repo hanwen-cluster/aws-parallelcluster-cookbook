@@ -1,9 +1,9 @@
 # Slurm
 default['cluster']['slurm']['version'] = '25-11-2-1'
-default['cluster']['slurm']['commit'] = ''
+default['cluster']['slurm']['commit'] = '2cf3ee11f52804da40fdb1eb27cce18fed9325bd'
 default['cluster']['slurm']['branch'] = ''
 default['cluster']['slurm']['sha256'] = '719783317e46b6241ab5c8f1e3f91e1e34fda63b5a1cd21403fa7696ec8d517c'
-default['cluster']['slurm']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/slurm"
+default['cluster']['slurm']['base_url'] = "https://codeload.github.com/SchedMD/slurm/legacy.tar.gz/"
 # Munge
 default['cluster']['munge']['munge_version'] = '0.5.17'
 default['cluster']['munge']['sha256'] = '4d6a1b9665d8a1119fb90678e6bcf446012340dc59dbcc90a10e2ab2e4724f08'
