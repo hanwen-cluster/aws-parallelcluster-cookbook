@@ -79,6 +79,8 @@ default['cluster']['cluster_config_version'] = nil
 default['cluster']['instance_types_data_version'] = nil
 default['cluster']['change_set_s3_key'] = nil
 default['cluster']['instance_types_data_s3_key'] = nil
+default['cluster']['run_instances_overrides_s3_key'] = nil
+default['cluster']['run_instances_overrides_version'] = nil
 
 # Intel MPI
 default['cluster']['intelmpi']['version'] = '2021.17'
