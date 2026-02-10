@@ -27,15 +27,20 @@ action :run do
       Chef::Log.info("Backing up old instance types data from (#{node['cluster']['instance_types_data_path']}) to (#{node['cluster']['previous_instance_types_data_path']})")
       ::FileUtils.cp_r(node['cluster']['instance_types_data_path'], node['cluster']['previous_instance_types_data_path'], remove_destination: true)
 
+      Chef::Log.info("Backing up old run_instances_overrides from (#{node['cluster']['slurm']['run_instances_overrides_path']}) to (#{node['cluster']['slurm']['previous_run_instances_overrides_path']})")
+      ::FileUtils.cp_r(node['cluster']['slurm']['run_instances_overrides_path'], node['cluster']['slurm']['previous_run_instances_overrides_path'], remove_destination: true)
+
       fetch_change_set
       Chef::Log.info("Changeset is:\n#{::File.read(node['cluster']['change_set_path'])}")
 
       fetch_instance_type_data unless ::FileUtils.identical?(node['cluster']['previous_cluster_config_path'], node['cluster']['cluster_config_path'])
+      fetch_run_instances_overrides unless ::FileUtils.identical?(node['cluster']['previous_cluster_config_path'], node['cluster']['cluster_config_path'])
       Chef::Log.info("Backing up old shared storages data from (#{node['cluster']['shared_storages_mapping_path']}) to (#{node['cluster']['previous_shared_storages_mapping_path']})")
       ::FileUtils.cp_r(node['cluster']['shared_storages_mapping_path'], node['cluster']['previous_shared_storages_mapping_path'], remove_destination: true)
     else
       fetch_cluster_config(node['cluster']['cluster_config_path']) unless ::File.exist?(node['cluster']['cluster_config_path'])
       fetch_instance_type_data unless ::File.exist?(node['cluster']['instance_types_data_path'])
+      fetch_run_instances_overrides unless ::File.exist?(node['cluster']['slurm']['run_instances_overrides_path'])
     end
 
     # ensure config is shared also with login nodes
@@ -161,6 +166,18 @@ action_class do # rubocop:disable Metrics/BlockLength
       instance_version_id = node['cluster']['instance_types_data_version'] unless node['cluster']['instance_types_data_version'].nil?
       fetch_s3_object("copy_instance_type_data_from_s3", node['cluster']['instance_types_data_s3_key'], node['cluster']['instance_types_data_path'], instance_version_id)
     end
+  end
+
+  def fetch_run_instances_overrides
+    if kitchen_test? && !node['interact_with_s3']
+      return
+    end
+
+    # Ensure parent directory exists (it may not yet during initial bootstrap)
+    ::FileUtils.mkdir_p(::File.dirname(node['cluster']['slurm']['run_instances_overrides_path']))
+
+    overrides_version_id = node['cluster']['run_instances_overrides_version'] unless node['cluster']['run_instances_overrides_version'].nil?
+    fetch_s3_object("copy_run_instances_overrides_from_s3", node['cluster']['run_instances_overrides_s3_key'], node['cluster']['slurm']['run_instances_overrides_path'], overrides_version_id)
   end
 
   def write_config_version_file(path)
