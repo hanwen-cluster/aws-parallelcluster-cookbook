@@ -1,7 +1,8 @@
 # URLs to software packages used during install recipes
 default['cluster']['slurm']['fleet_config_path'] = "#{node['cluster']['slurm_plugin_dir']}/fleet-config.json"
 default['cluster']['slurm']['run_instances_overrides_path'] = "#{node['cluster']['slurm']['install_dir']}/etc/pcluster/run_instances_overrides.json"
-default['cluster']['slurm']['previous_run_instances_overrides_path'] = "#{node['cluster']['slurm']['install_dir']}/etc/pcluster/previous-run_instances_overrides.json"
+default['cluster']['slurm']['pcluster_run_instances_overrides_path'] = "#{node['cluster']['slurm']['install_dir']}/etc/pcluster/pcluster_run_instances_overrides.json"
+default['cluster']['slurm']['previous_pcluster_run_instances_overrides_path'] = "#{node['cluster']['slurm']['install_dir']}/etc/pcluster/previous-pcluster_run_instances_overrides.json"
 
 default['cluster']['dns_domain'] = nil
 default['cluster']['use_private_hostname'] = 'false'
