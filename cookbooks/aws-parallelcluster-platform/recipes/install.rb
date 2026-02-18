@@ -32,6 +32,7 @@ include_recipe "aws-parallelcluster-platform::cron"
 
 chrony 'install Amazon Time Sync'
 c_states 'disable x86_64 C states'
+tuned 'set HPC tuned profile' if platform?('redhat', 'rocky')
 include_recipe "aws-parallelcluster-platform::nvidia_install"
 include_recipe "aws-parallelcluster-platform::intel_mpi"
 arm_pl 'Install ARM Performance Library'
