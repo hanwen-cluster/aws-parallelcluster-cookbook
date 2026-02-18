@@ -22,7 +22,7 @@ action :setup do
 
   execute "Set tuned profile to #{desired_profile}" do
     command "tuned-adm profile #{desired_profile}"
-    only_if "which tuned-adm && tuned-adm list | grep -q '- #{desired_profile} '"
+    only_if "which tuned-adm && tuned-adm list | grep -q '#{desired_profile}'"
     not_if "tuned-adm active | grep -q 'Current active profile: #{desired_profile}'"
   end
 end
