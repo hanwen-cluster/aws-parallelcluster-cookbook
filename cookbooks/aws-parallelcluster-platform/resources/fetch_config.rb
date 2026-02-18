@@ -27,8 +27,8 @@ action :run do
       Chef::Log.info("Backing up old instance types data from (#{node['cluster']['instance_types_data_path']}) to (#{node['cluster']['previous_instance_types_data_path']})")
       ::FileUtils.cp_r(node['cluster']['instance_types_data_path'], node['cluster']['previous_instance_types_data_path'], remove_destination: true)
 
-      Chef::Log.info("Backing up old pcluster_run_instances_overrides from (#{node['cluster']['slurm']['pcluster_run_instances_overrides_path']}) to (#{node['cluster']['slurm']['previous_pcluster_run_instances_overrides_path']})")
-      ::FileUtils.cp_r(node['cluster']['slurm']['pcluster_run_instances_overrides_path'], node['cluster']['slurm']['previous_pcluster_run_instances_overrides_path'], remove_destination: true) if ::File.exist?(node['cluster']['slurm']['pcluster_run_instances_overrides_path'])
+      Chef::Log.info("Backing up old run_instances_overrides from (#{node['cluster']['slurm']['run_instances_overrides_path']}) to (#{node['cluster']['slurm']['previous_run_instances_overrides_path']})")
+      ::FileUtils.cp_r(node['cluster']['slurm']['run_instances_overrides_path'], node['cluster']['slurm']['previous_run_instances_overrides_path'], remove_destination: true)
 
       fetch_change_set
       Chef::Log.info("Changeset is:\n#{::File.read(node['cluster']['change_set_path'])}")
@@ -40,7 +40,7 @@ action :run do
     else
       fetch_cluster_config(node['cluster']['cluster_config_path']) unless ::File.exist?(node['cluster']['cluster_config_path'])
       fetch_instance_type_data unless ::File.exist?(node['cluster']['instance_types_data_path'])
-      fetch_run_instances_overrides unless ::File.exist?(node['cluster']['slurm']['pcluster_run_instances_overrides_path'])
+      fetch_run_instances_overrides unless ::File.exist?(node['cluster']['slurm']['run_instances_overrides_path'])
     end
 
     # ensure config is shared also with login nodes
@@ -174,10 +174,10 @@ action_class do # rubocop:disable Metrics/BlockLength
     end
 
     # Ensure parent directory exists (it may not yet during initial bootstrap)
-    ::FileUtils.mkdir_p(::File.dirname(node['cluster']['slurm']['pcluster_run_instances_overrides_path']))
+    ::FileUtils.mkdir_p(::File.dirname(node['cluster']['slurm']['run_instances_overrides_path']))
 
     overrides_version_id = node['cluster']['run_instances_overrides_version'] unless node['cluster']['run_instances_overrides_version'].nil?
-    fetch_s3_object("copy_pcluster_run_instances_overrides_from_s3", node['cluster']['run_instances_overrides_s3_key'], node['cluster']['slurm']['pcluster_run_instances_overrides_path'], overrides_version_id)
+    fetch_s3_object("copy_run_instances_overrides_from_s3", node['cluster']['run_instances_overrides_s3_key'], node['cluster']['slurm']['run_instances_overrides_path'], overrides_version_id)
   end
 
   def write_config_version_file(path)
