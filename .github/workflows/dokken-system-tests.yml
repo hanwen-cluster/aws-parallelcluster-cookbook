@@ -78,11 +78,13 @@ jobs:
         with:
           omnitruckUrl: omnitruck.cinc.sh
           project: cinc-workstation
-      # kitchen-dokken 2.23.0 (bundled with cinc-workstation 26.0.2) requires
-      # kitchen-omnibus-chef which provides the ChefBase#license_acceptance_id
-      # method. Cinc-workstation doesn't ship kitchen-omnibus-chef since it's a
-      # Chef-specific gem. Install it so the inheritance chain is complete.
-      - name: Install kitchen-omnibus-chef dependency
+      # kitchen-dokken 2.23.0 (bundled with cinc-workstation 26.0.2) has a
+      # check_license method that calls license_acceptance_id from
+      # kitchen-omnibus-chef, which cinc-workstation doesn't ship.
+      # Since we use Cinc (Apache-licensed, no license acceptance needed),
+      # install the missing dependency to satisfy the inheritance chain.
+      # The license check is a no-op for product_name=cinc anyway.
+      - name: Install kitchen-omnibus-chef for kitchen-dokken compatibility
         if: steps.changed-files-excluding-tests.outputs.any_changed == 'true' && needs.check-labels.outputs.skip_system_tests != 'true'
         run: sudo /opt/cinc-workstation/embedded/bin/gem install kitchen-omnibus-chef --no-document
       - name: Kitchen Test Install
@@ -91,7 +93,6 @@ jobs:
         with:
           os: ${{ matrix.os }}
         env:
-          CHEF_LICENSE: accept-no-persist
           KITCHEN_YAML: kitchen.docker.yml
           KITCHEN_LOCAL_YAML: cookbooks/aws-parallelcluster-entrypoints/kitchen.entrypoints-install.yml
           KITCHEN_GLOBAL_YAML: kitchen.global.yml
@@ -112,7 +113,6 @@ jobs:
           os: ${{ matrix.os }}
           suite: slurm-config-head-node-x86-64-docker
         env:
-          CHEF_LICENSE: accept-no-persist
           KITCHEN_YAML: kitchen.docker.yml
           KITCHEN_LOCAL_YAML: kitchen.validate-config.yml
           KITCHEN_GLOBAL_YAML: kitchen.global.yml
