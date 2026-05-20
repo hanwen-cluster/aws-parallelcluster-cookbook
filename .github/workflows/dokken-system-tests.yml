@@ -78,21 +78,13 @@ jobs:
         with:
           omnitruckUrl: omnitruck.cinc.sh
           project: cinc-workstation
-      # Pin kitchen-dokken to 2.22.2:
-      #   - 2.21.4+ fixes the Docker 29.x "Cmd must be a slice/array" breakage
-      #     (see https://www.chef.io/blog/important-information-for-chef-workstation-users-facing-ci-pipeline-issues-when-running-test-kitchen)
-      #   - 2.23.0 introduced a check_license override that calls
-      #     license_acceptance_id from a parent class that isn't always
-      #     present in cinc-workstation, producing:
-      #       undefined local variable or method 'license_acceptance_id'
-      #       for an instance of Kitchen::Provisioner::Dokken
-      #   - 2.22.2 is the newest version with the Docker 29 fix and without
-      #     the broken override.
-      - name: Pin kitchen-dokken to known-good version
+      # kitchen-dokken 2.23.0 (bundled with cinc-workstation 26.0.2) requires
+      # kitchen-omnibus-chef which provides the ChefBase#license_acceptance_id
+      # method. Cinc-workstation doesn't ship kitchen-omnibus-chef since it's a
+      # Chef-specific gem. Install it so the inheritance chain is complete.
+      - name: Install kitchen-omnibus-chef dependency
         if: steps.changed-files-excluding-tests.outputs.any_changed == 'true' && needs.check-labels.outputs.skip_system_tests != 'true'
-        run: |
-          sudo /opt/cinc-workstation/embedded/bin/gem uninstall kitchen-dokken -a -x --force
-          sudo /opt/cinc-workstation/embedded/bin/gem install kitchen-dokken -v 2.22.2 --no-document
+        run: sudo /opt/cinc-workstation/embedded/bin/gem install kitchen-omnibus-chef --no-document
       - name: Kitchen Test Install
         if: steps.changed-files-excluding-tests.outputs.any_changed == 'true' && needs.check-labels.outputs.skip_system_tests != 'true'
         uses: actionshub/test-kitchen@main
