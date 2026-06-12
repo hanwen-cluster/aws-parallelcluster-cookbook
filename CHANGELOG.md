@@ -11,6 +11,7 @@ This file is used to list changes made in each version of the AWS ParallelCluste
 - Further reduce transient build-image failures on RHEL and Rocky caused by out-of-sync repo mirrors by resetting metadata upon retry.
 - Improve cluster update resiliency on login nodes by reusing the head-node-driven orchestration already in place on compute nodes, 
   removing the dependency on cfn-hup and cfn-init.
+- Support usernames longer than 8 characters and usernames with `.` in DCV authenticator.
   
 
 **CHANGES**
