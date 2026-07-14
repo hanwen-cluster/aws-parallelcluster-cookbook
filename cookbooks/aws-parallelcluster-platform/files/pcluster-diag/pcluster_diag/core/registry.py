@@ -21,6 +21,16 @@ from typing import Dict, List, Optional, Set, Tuple
 import click
 
 from pcluster_diag.checks.cfn_hup import CfnHupRunsOnlyOnHeadNode
+from pcluster_diag.checks.daemon_health import ClusterDaemonsAreRunning, ClustermgtdHeartbeatIsHealthy
+from pcluster_diag.checks.directory_lookup import (
+    DirectoryBackendIsReachable,
+    DirectoryBindCredentialsAreValid,
+    DirectoryEndpointCertificateIsValid,
+    DirectoryLookupLatency,
+    DirectoryLookupResiliencySettings,
+    DirectoryServiceManagedByClusterConfig,
+    DirectoryUsersResolveUnderSearchBase,
+)
 from pcluster_diag.checks.sample import SampleCheck
 from pcluster_diag.models.check import Check
 from pcluster_diag.models.context import Context
@@ -123,4 +133,17 @@ class Registry:
 
 # The default Registry, in execution order. Concrete Checks are registered inline here by chaining
 # ``register`` (which returns the registry).
-DEFAULT_REGISTRY = Registry().register(CfnHupRunsOnlyOnHeadNode()).register(SampleCheck())
+DEFAULT_REGISTRY = (
+    Registry()
+    .register(CfnHupRunsOnlyOnHeadNode())
+    .register(ClusterDaemonsAreRunning())
+    .register(ClustermgtdHeartbeatIsHealthy())
+    .register(DirectoryServiceManagedByClusterConfig())
+    .register(DirectoryLookupResiliencySettings())
+    .register(DirectoryLookupLatency())
+    .register(DirectoryBackendIsReachable())
+    .register(DirectoryEndpointCertificateIsValid())
+    .register(DirectoryBindCredentialsAreValid())
+    .register(DirectoryUsersResolveUnderSearchBase())
+    .register(SampleCheck())
+)

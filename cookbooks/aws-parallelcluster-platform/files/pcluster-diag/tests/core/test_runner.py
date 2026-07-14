@@ -89,6 +89,16 @@ def test_emits_outcome_log_line_per_check(caplog):
     assert levels["B: FAILURE"] == logging.ERROR
 
 
+def test_warning_outcome_is_logged_at_warning_level(caplog):
+    a = FakeCheck("A", status=Status.WARNING)
+
+    with caplog.at_level(logging.INFO, logger="pcluster_diag.core.runner"):
+        Runner().execute(sample_context(), [a])
+
+    levels = {record.getMessage(): record.levelno for record in caplog.records}
+    assert levels["A: WARNING"] == logging.WARNING
+
+
 def test_results_follow_registration_order_across_dispositions():
     # Checks are emitted in the order given (registration order), regardless of disposition: an
     # executed Check, a non-applicable one, another executed Check, and a user-declined one.

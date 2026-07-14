@@ -23,6 +23,7 @@ class Status(Enum):
     """The status of a Check execution."""
 
     PASSED = "PASSED"  # condition satisfied
+    WARNING = "WARNING"  # check completed; condition satisfied but an advisory concern was found
     CHECK_ERROR = "CHECK_ERROR"  # check raised / could not complete
     FAILURE = "FAILURE"  # check completed; condition not satisfied
     SKIPPED_BY_USER = "SKIPPED_BY_USER"  # user did not approve its execution
@@ -45,8 +46,9 @@ class Result:
         check_description: The Check's human-readable description.
         status: The Status of the execution (PASSED, CHECK_ERROR, FAILURE, SKIPPED_BY_USER, or
             SKIPPED_NOT_APPLICABLE).
-        errors: The set of failure modes for a FAILURE or CHECK_ERROR Result, each a CheckError
-            (code + message); None for any other status.
+        errors: The set of failure modes for a FAILURE or CHECK_ERROR Result, or the advisory
+            findings for a WARNING Result, each a CheckError (code + message); None for any other
+            status.
     """
 
     check_id: str
@@ -61,6 +63,20 @@ class Result:
             check_id=check.identifier,
             check_description=check.description,
             status=Status.PASSED,
+        )
+
+    @staticmethod
+    def warning(check, errors: Optional[List[CheckError]] = None) -> "Result":
+        """Build a WARNING Result for ``check`` carrying the advisory findings in ``errors``.
+
+        The check's condition is satisfied, but the advisories are worth surfacing. A WARNING does not
+        make the run unsuccessful.
+        """
+        return Result(
+            check_id=check.identifier,
+            check_description=check.description,
+            status=Status.WARNING,
+            errors=errors,
         )
 
     @staticmethod

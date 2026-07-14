@@ -15,7 +15,7 @@
 import pytest
 
 from pcluster_diag.models.check_error import CheckError
-from pcluster_diag.models.result import INTERNAL_ERROR_CODE, Result, Status
+from pcluster_diag.models.result import FAILED_STATUSES, INTERNAL_ERROR_CODE, Result, Status
 from tests.sample_data import FakeCheck, sample_result
 
 _SAMPLE_CHECK = FakeCheck(identifier="SampleCheck", description="a sample check")
@@ -23,11 +23,12 @@ _SAMPLE_CHECK = FakeCheck(identifier="SampleCheck", description="a sample check"
 
 @pytest.mark.parametrize("status", list(Status), ids=lambda status: status.name)
 def test_result_status_is_a_valid_status_member(status):
-    """A Result's Status is one of PASSED, CHECK_ERROR, FAILURE, SKIPPED_BY_USER, or SKIPPED_NOT_APPLICABLE."""
+    """A Result's Status is one of the defined Status members."""
     result = sample_result(status=status)
 
     assert result.status in {
         Status.PASSED,
+        Status.WARNING,
         Status.CHECK_ERROR,
         Status.FAILURE,
         Status.SKIPPED_BY_USER,
@@ -88,3 +89,19 @@ def test_failure_factory_builds_result_with_errors():
     # errors default to None when omitted.
     defaults = Result.failure(_SAMPLE_CHECK)
     assert defaults.errors is None
+
+
+def test_warning_factory_builds_result_with_advisories():
+    advisories = [CheckError("W1", "heads up"), CheckError("W2", "also this")]
+
+    result = Result.warning(_SAMPLE_CHECK, errors=advisories)
+
+    assert result.status is Status.WARNING
+    assert result.check_id == _SAMPLE_CHECK.identifier
+    assert result.check_description == _SAMPLE_CHECK.description
+    assert result.errors == advisories
+
+    # A WARNING is advisory: it does not make the run unsuccessful.
+    assert Status.WARNING not in FAILED_STATUSES
+    # errors default to None when omitted.
+    assert Result.warning(_SAMPLE_CHECK).errors is None
