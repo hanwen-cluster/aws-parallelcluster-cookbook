@@ -389,6 +389,7 @@ class DirectoryBindCredentialsAreValid(Check):
         credentials = _ldap_bind_credentials()
         endpoints = _ldap_endpoints()
         if credentials is None or not endpoints:
+            logger.warning("Hellllllllll: %s", error)
             return Result.skipped_not_applicable(self)
 
         bind_dn, password = credentials
