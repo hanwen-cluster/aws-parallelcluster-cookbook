@@ -13,8 +13,8 @@ default["cluster"]["scheduler_compute_resource_name"] = nil
 default['cluster']['enable_nss_slurm'] = node['cluster']['directory_service']['enabled']
 
 # PMIX Version and Checksum
-default['cluster']['pmix']['version'] = '5.0.10'
-default['cluster']['pmix']['sha256'] = '7c0be0b5f85cc605fc51b44642fab72494e739ef9c1aa52a8741b847d6907b43'
+default['cluster']['pmix']['version'] = '5.0.11'
+default['cluster']['pmix']['sha256'] = '11d91183c4fd77117d9e7f186a1f4fde182895314b18fc5783fee7e2e5595e88'
 default['cluster']['pmix']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/pmix"
 
 # Slurmdbd
@@ -24,7 +24,7 @@ default['cluster']['slurmdbd_service_enabled'] = "true"
 default['cluster']['slurm']['spank_config_dir'] = "#{node['cluster']['slurm']['install_dir']}/etc/plugstack.conf.d"
 
 # Pyxis
-default['cluster']['pyxis']['version'] = '0.20.0'
+default['cluster']['pyxis']['version'] = '0.24.0'
 default['cluster']['pyxis']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/pyxis"
 default['cluster']['pyxis']['runtime_path'] = '/run/pyxis'
 

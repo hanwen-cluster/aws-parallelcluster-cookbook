@@ -19,10 +19,11 @@ This file is used to list changes made in each version of the AWS ParallelCluste
   - openssh-2.11.17 (from openssh-2.11.14)
   - yum-8.0.0 (from yum-7.4.20)
   - yum-epel-5.0.9 (from yum-epel-5.0.8)
-- Upgrade aws-cfn-bootstrap to version 2.0-39 (from 2.0-38).
+- Upgrade aws-cfn-bootstrap to version 2.0-40 (from 2.0-38).
 - Move all ParallelCluster-managed bootstrap files off `/tmp` into a dedicated `/opt/parallelcluster/tmp`
   directory. Therefore, Image builds, cluster creations and updates work on custom AMIs that mount `/tmp` with `noexec`.
-  
+- Upgrade mysql-community-client to version 8.4.10 (from 8.4.8).
+- Upgrade DCGM to version 4.6.0 (from 4.5.1).
 
 **CHANGES**
 - Enforce NFSv4-only on the ParallelCluster-managed NFS server (head node). The NFSv3 client stack (rpcbind, rpc-statd, lockd) are unchanged, so cluster nodes can still mount external NFSv3 servers.
@@ -37,6 +38,19 @@ This file is used to list changes made in each version of the AWS ParallelCluste
   - Rdma-core: rdma-core-63.0-1
   - Open MPI: openmpi40-aws-4.1.7-3 and openmpi50-aws-5.0.9-11
 - Install the aws-parallelcluster-node package from S3 in all regions instead of PyPI, to support air-gapped and proxied environments.
+- Install amazon-efs-utils from the official EFS endpoint instead of building from source.
+  Need to allowlist the CloudFront domain `amazon-efs-utils.aws.com` in their proxy/egress configuration 
+  for `build-image` with isolated subnets.
+- Upgrade Cinc Client to version 19.3.14 (from 18.8.54).
+- Upgrade GDRCopy to version 2.6 (from 2.5.2).
+- Upgrade PMIx to version 5.0.11 (from 5.0.10).
+- Upgrade Enroot to version 4.2.1 (from 3.4.1).
+- Upgrade Pyxis to version 0.24.0 (from 0.20.0).
+- Upgrade stunnel to version 5.78 (from 5.67).
+- Upgrade Python to version 3.14.6 (from 3.14.2).
+- Upgrade Intel MPI to version 2021.18.0.749 (from 2021.17.2.94).
+- Upgrade Arm Performance Libraries (ArmPL) to version 26.01.1 (from 24.10).
+- Upgrade Cinc Client to version 19.3.14 (from 18.8.54).
 
 **BUG FIXES**
 - Fix cluster creation failure caused by Slurm accounting bootstrap failing when ClusterName is overridden 

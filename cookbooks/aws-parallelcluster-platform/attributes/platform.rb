@@ -8,16 +8,16 @@ default['cluster']['sysctl']['ipv4']['gc_thresh3'] = 16_384
 
 # ArmPL
 default['conditions']['arm_pl_supported'] = arm_instance?
-default['cluster']['armpl']['version'] = '24.10'
+default['cluster']['armpl']['version'] = '26.01.1'
 default['cluster']['armpl']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/armpl"
 
 # Stunnel
-default['cluster']['stunnel']['version'] = '5.67'
-default['cluster']['stunnel']['sha256'] = '3086939ee6407516c59b0ba3fbf555338f9d52f459bcab6337c0f00e91ea8456'
+default['cluster']['stunnel']['version'] = '5.78'
+default['cluster']['stunnel']['sha256'] = '8727e53bb8b7528f850327a2a149158422c02183bc120d1d733cc65b1e2c349d'
 default['cluster']['stunnel']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/stunnel"
 
 # Enroot
-default['cluster']['enroot']['version'] = '3.4.1'
+default['cluster']['enroot']['version'] = '4.2.1'
 default['cluster']['enroot']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/enroot"
 default['cluster']['enroot']['caps_base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/enroot"
 default['cluster']['enroot']['temporary_dir'] = '/run/enroot'
@@ -26,7 +26,7 @@ default['cluster']['enroot']['persistent_dir'] = '/var/enroot'
 # NVidia
 default['cluster']['nvidia']['enabled'] = 'no'
 default['cluster']['nvidia']['driver_version'] = '580.126.20'
-default['cluster']['nvidia']['dcgm_version'] = '4.5.1-1'
+default['cluster']['nvidia']['dcgm_version'] = '4.6.0-1'
 
 default['cluster']['nvidia']['driver_base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/nvidia_driver"
 default['cluster']['nvidia']['dcgm_base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/nvidia_dcgm"
@@ -39,8 +39,8 @@ default['cluster']['nvidia']['cuda']['version'] = '13.0.2'
 default['cluster']['nvidia']['cuda']['driver_version_suffix'] = '580.95.05'
 
 # GDRCopy
-default['cluster']['nvidia']['gdrcopy']['version'] = '2.5.2'
-default['cluster']['nvidia']['gdrcopy']['sha256'] = '32bc7b2c198dd97ec251de0ff4823252c95e31a4c79a5f843c82514c9af2052b'
+default['cluster']['nvidia']['gdrcopy']['version'] = '2.6'
+default['cluster']['nvidia']['gdrcopy']['sha256'] = 'c9eaf0593567ac5765d04c48cf7923dacb2644240b35bb5f025edb3bde1d5b4f'
 default['cluster']['nvidia']['gdrcopy']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/gdr_copy/v#{node['cluster']['nvidia']['gdrcopy']['version']}.tar.gz"
 
 # nvidia-imex
@@ -104,6 +104,6 @@ default['cluster']['change_set_s3_key'] = nil
 default['cluster']['instance_types_data_s3_key'] = nil
 
 # Intel MPI
-default['cluster']['intelmpi']['version'] = '2021.17'
-default['cluster']['intelmpi']['full_version'] = '2021.17.2.94'
+default['cluster']['intelmpi']['version'] = '2021.18'
+default['cluster']['intelmpi']['full_version'] = '2021.18.0.749'
 default['cluster']['intelmpi']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/impi"
