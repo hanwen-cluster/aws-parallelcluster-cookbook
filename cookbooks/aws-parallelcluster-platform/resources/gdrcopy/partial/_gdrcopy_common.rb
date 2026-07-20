@@ -70,10 +70,21 @@ action :setup do
     user 'root'
     group 'root'
     cwd Chef::Config[:file_cache_path]
+    # GDRCopy's build scripts create their working directory with
+    # `mktemp -d /tmp/gdr.XXXXXX`. The absolute /tmp template makes mktemp ignore
+    # TMPDIR, so the whole build (including the BUILD/ dir where ./config_arch is
+    # executed) runs under /tmp. When /tmp is mounted noexec, config_arch cannot
+    # execute and the build fails. Patch the scripts to honor TMPDIR, and point
+    # TMPDIR at the exec-safe directory so the build runs from an executable
+    # filesystem.
+    environment('TMPDIR' => node['cluster']['exec_tmp_dir'])
     code <<-GDRCOPY_INSTALL
     set -e
     tar -xf #{gdrcopy_tarball}
     cd gdrcopy-#{gdrcopy_version}/packages
+    for build_script in build-rpm-packages.sh build-deb-packages.sh; do
+      [ -f "$build_script" ] && sed -i 's#mktemp -d /tmp/gdr\\.XXXXXX#mktemp -d "${TMPDIR:-/tmp}/gdr.XXXXXX"#' "$build_script"
+    done
     #{installation_code}
     GDRCOPY_INSTALL
   end

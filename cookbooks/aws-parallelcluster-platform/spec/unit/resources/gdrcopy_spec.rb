@@ -257,7 +257,8 @@ describe 'gdrcopy:setup' do
         is_expected.to run_bash('Install NVIDIA GDRCopy').with(
           user: 'root',
           group: 'root',
-          cwd: Chef::Config[:file_cache_path]
+          cwd: Chef::Config[:file_cache_path],
+          environment: { 'TMPDIR' => node['cluster']['exec_tmp_dir'] }
         ).with_code(/tar -xf #{gdrcopy_tarball}/)
                                                          .with_code(%r{cd gdrcopy-#{gdrcopy_version}/packages})
 
