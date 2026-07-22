@@ -103,3 +103,32 @@ DIRECTORY_LOOKUP_WARN_THRESHOLD_SECONDS = 2.0
 DIRECTORY_LOOKUP_FAIL_THRESHOLD_SECONDS = 10.0
 # Hard cap so a probe never hangs indefinitely on a stuck directory backend.
 DIRECTORY_LOOKUP_COMMAND_TIMEOUT_SECONDS = 30
+
+# Slurm accounting
+
+# Slurm's configuration directory and the accounting conf files it holds. slurmdbd.conf and
+# slurm_parallelcluster_slurmdbd.conf are present on the head node only in Local_Slurmdbd mode;
+# slurm_external_slurmdbd.conf lives on the external slurmdbd instance and is never inspected here.
+SLURM_ETC_DIR = DEFAULT_SLURM_INSTALL_DIR + "/etc"
+SLURMDBD_CONF_PATH = SLURM_ETC_DIR + "/slurmdbd.conf"
+SLURM_PARALLELCLUSTER_SLURMDBD_CONF_PATH = SLURM_ETC_DIR + "/slurm_parallelcluster_slurmdbd.conf"
+# The cluster name slurmdbd expects, written under Slurm's StateSaveLocation; used to detect
+# cluster-ID mismatches.
+SLURM_STATE_CLUSTERNAME_PATH = SLURM_STATE_SAVE_PATH + "/clustername"
+SLURMCTLD_LOG_PATH = "/var/log/slurmctld.log"
+
+# Defaults & timeouts.
+DEFAULT_SLURMDBD_PORT = 6819  # port slurmdbd LISTENS on (slurm.conf AccountingStoragePort)
+DEFAULT_DATABASE_PORT = 3306  # MySQL/MariaDB DATABASE port (Database.Uri; conf StoragePort)
+ACCOUNTING_DB_AUTH_TIMEOUT_SECONDS = 10  # hard cap on a credential/auth probe
+ACCOUNTING_QUERY_TIMEOUT_SECONDS = 30  # hard cap on a timed end-to-end accounting query
+
+# Accounting-query latency thresholds (seconds). Both are <= ACCOUNTING_QUERY_TIMEOUT_SECONDS.
+# warn < elapsed <= fail -> WARNING; elapsed > fail (or timeout) -> FAILURE; elapsed <= warn -> PASSED.
+ACCOUNTING_QUERY_LATENCY_WARN_THRESHOLD_SECONDS = 5
+ACCOUNTING_QUERY_LATENCY_FAIL_THRESHOLD_SECONDS = 15
+
+# Expected ownership/mode of the slurmdbd conf files (slurm:slurm 0600, holds StoragePass).
+SLURMDBD_CONF_OWNER = SLURM_USER
+SLURMDBD_CONF_GROUP = SLURM_USER
+SLURMDBD_CONF_MODE = "0600"

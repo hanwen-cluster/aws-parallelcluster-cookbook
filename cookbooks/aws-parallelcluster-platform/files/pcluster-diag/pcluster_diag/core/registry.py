@@ -27,6 +27,7 @@ from pcluster_diag.checks.directory_lookup import DirectoryService
 from pcluster_diag.checks.imds import Imds
 from pcluster_diag.checks.instance_profile import ImdsRoleMatchesCfnHupConfig
 from pcluster_diag.checks.reserved_users import ReservedUsersAndGroups
+from pcluster_diag.checks.slurm_accounting import SlurmAccounting
 from pcluster_diag.models.check import Check
 from pcluster_diag.models.context import Context
 
@@ -138,4 +139,5 @@ DEFAULT_REGISTRY = (
     .register(ClusterDaemonsAreRunning())
     .register(ClustermgtdHeartbeatIsHealthy())
     .register(DirectoryService())
+    .register(SlurmAccounting())
 )

@@ -260,6 +260,7 @@ describe 'gdrcopy:setup' do
           cwd: Chef::Config[:file_cache_path]
         ).with_code(/tar -xf #{gdrcopy_tarball}/)
                                                          .with_code(%r{cd gdrcopy-#{gdrcopy_version}/packages})
+                                                         .with_code(/mktemp -d "\$\{TMPDIR:-\/tmp\}\/gdr\.XXXXXX"/)
 
         if platform == 'ubuntu'
           expect(installation_code).to match(%r{CUDA=/usr/local/cuda ./build-deb-packages.sh})
