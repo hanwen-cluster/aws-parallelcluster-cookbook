@@ -19,14 +19,5 @@ end
 use 'partial/_gdrcopy_common.rb'
 use 'partial/_gdrcopy_common_rhel.rb'
 
-def gdrcopy_enabled?
-  nvidia_enabled?
-end
-
-def gdrcopy_platform
-  "el#{node['platform_version'].to_i}"
-end
-
-def gdrcopy_arch
-  arm_instance? ? 'aarch64' : 'x86_64'
-end
+# All behavior (enabled?, platform el<N>, arch, packages, install) comes from
+# the shared partials; rocky needs no overrides.

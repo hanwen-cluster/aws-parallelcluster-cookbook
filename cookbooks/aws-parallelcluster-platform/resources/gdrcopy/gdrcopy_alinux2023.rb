@@ -19,18 +19,19 @@ end
 use 'partial/_gdrcopy_common.rb'
 use 'partial/_gdrcopy_common_rhel.rb'
 
-def gdrcopy_enabled?
-  nvidia_enabled?
-end
-
-def gdrcopy_build_dependencies
-  %w(dkms rpm-build make check check-devel) # Subunit is not available in Al2023
+# NVIDIA does not publish Amazon Linux 2023 gdrcopy packages, so AL2023 reuses
+# the RHEL9 (el9) build. It is ABI-compatible (both AL2023 and RHEL9 are glibc
+# 2.34) and the kernel module is a DKMS source package rebuilt locally against
+# the AL2023 kernel, so the el9 tag does not affect the module. Everything else
+# (enabled?, arch, packages, install) comes from the shared RHEL partial.
+#
+# Both the redist directory (gdrcopy_redist_distro) and the filename tag
+# (gdrcopy_platform) point at rhel9/el9 so AL2023 downloads the same packages
+# from the same redist path as RHEL9 (no duplicated mirror files).
+def gdrcopy_redist_distro
+  'rhel9'
 end
 
 def gdrcopy_platform
-  'amzn-2023'
-end
-
-def gdrcopy_arch
-  arm_instance? ? 'aarch64' : 'x86_64'
+  'el9'
 end

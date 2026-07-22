@@ -18,32 +18,52 @@ end
 
 use 'partial/_gdrcopy_common.rb'
 
-def gdrcopy_build_dependencies
-  %w(build-essential devscripts debhelper check libsubunit-dev fakeroot pkg-config dkms)
+def gdrcopy_dependencies
+  %w(dkms)
 end
 
 def gdrcopy_arch
   arm_instance? ? 'arm64' : 'amd64'
 end
 
-def installation_code
-  <<~COMMAND
-  CUDA=/usr/local/cuda ./build-deb-packages.sh
-  dpkg -i gdrdrv-dkms_#{gdrcopy_version}-1_#{gdrcopy_arch}.#{gdrcopy_platform}.deb
-  dpkg -i libgdrapi_#{gdrcopy_version}-1_#{gdrcopy_arch}.#{gdrcopy_platform}.deb
-  dpkg -i gdrcopy-tests_#{gdrcopy_version}-1_#{gdrcopy_arch}.#{gdrcopy_platform}+cuda*.deb
-  dpkg -i gdrcopy_#{gdrcopy_version}-1_#{gdrcopy_arch}.#{gdrcopy_platform}.deb
-  COMMAND
+# The gdrcopy-tests package is tagged with the CUDA major.minor it was built
+# against (e.g. gdrcopy-tests_2.6-1_amd64.Ubuntu22_04+cuda13.0.deb).
+def gdrcopy_cuda_suffix
+  "+cuda#{gdrcopy_cuda_version}"
 end
 
-def gdrcopy_enabled?
-  nvidia_enabled?
+# Prebuilt debs to download, matching NVIDIA's redist naming, e.g.:
+#   gdrdrv-dkms_2.6-1_amd64.Ubuntu22_04.deb
+#   libgdrapi_2.6-1_amd64.Ubuntu22_04.deb
+#   gdrcopy-tests_2.6-1_amd64.Ubuntu22_04+cuda13.0.deb
+#   gdrcopy_2.6-1_amd64.Ubuntu22_04.deb
+def gdrcopy_packages
+  [
+    "gdrdrv-dkms_#{gdrcopy_version_extended}_#{gdrcopy_arch}.#{gdrcopy_platform}.deb",
+    "libgdrapi_#{gdrcopy_version_extended}_#{gdrcopy_arch}.#{gdrcopy_platform}.deb",
+    "gdrcopy-tests_#{gdrcopy_version_extended}_#{gdrcopy_arch}.#{gdrcopy_platform}#{gdrcopy_cuda_suffix}.deb",
+    "gdrcopy_#{gdrcopy_version_extended}_#{gdrcopy_arch}.#{gdrcopy_platform}.deb",
+  ]
+end
+
+def gdrcopy_install_command
+  # Install all debs in one dpkg invocation so it can satisfy the
+  # inter-package dependencies within the set (gdrcopy -> libgdrapi, etc.).
+  "dpkg -i #{gdrcopy_packages.join(' ')}"
 end
 
 def gdrcopy_service
   'gdrdrv'
 end
 
+# NVIDIA redist distro directory segment used in the download path. Note it uses
+# an underscore (ubuntu22_04), unlike the CUDA-repo form (ubuntu2204). Distinct
+# from gdrcopy_platform, the package filename tag (Ubuntu22_04).
+def gdrcopy_redist_distro
+  "ubuntu#{node['platform_version'].gsub('.', '_')}"
+end
+
+# Tag embedded in the package filenames (e.g. libgdrapi_2.6-1_amd64.Ubuntu22_04.deb).
 def gdrcopy_platform
   "Ubuntu#{node['platform_version'].gsub(/\./, '_')}"
 end

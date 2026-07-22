@@ -16,16 +16,16 @@ def gdrcopy_version
   node['cluster']['nvidia']['gdrcopy']['version']
 end
 
+def gdrcopy_enabled?
+  nvidia_enabled?
+end
+
 # True if gdrcopy is installed (regardless of version). Like nvidia-smi for the
 # driver, the gdrcopy_sanity binary is the one of the test commands that are
 # installed by GDRCopy and we use it as signal of a healthy install
 # and is installed to /usr/bin on all platforms.
 def gdrcopy_installed?
   ::File.exist?('/usr/bin/gdrcopy_sanity')
-end
-
-def gdrcopy_checksum
-  node['cluster']['nvidia']['gdrcopy']['sha256']
 end
 
 unified_mode true
@@ -35,7 +35,7 @@ action :setup do
   return unless gdrcopy_enabled?
   return if on_docker?
 
-  # Skip rebuild + install if already installed (e.g. DLAMI).
+  # Skip install if already installed (e.g. DLAMI).
   return if gdrcopy_installed?
 
   # Save gdrcopy version for InSpec tests
@@ -43,38 +43,40 @@ action :setup do
   node.default['cluster']['nvidia']['gdrcopy']['service'] = gdrcopy_service
   node_attributes 'dump node attributes'
 
-  gdrcopy_tarball = "#{node['cluster']['sources_dir']}/gdrcopy-#{gdrcopy_version}.tar.gz"
-
   directory node['cluster']['sources_dir'] do
     recursive true
-  end
-
-  remote_file gdrcopy_tarball do
-    source gdrcopy_url
-    mode '0644'
-    retries 3
-    retry_delay 5
-    checksum gdrcopy_checksum
-    action :create_if_missing
   end
 
   package_repos 'update package repos' do
     action :update
   end
 
-  robust_package 'install gdrcopy build dependencies' do
-    packages gdrcopy_build_dependencies
+  # The gdrcopy kernel module (gdrdrv) ships as a DKMS package that is rebuilt
+  # against the running kernel at install time, so dkms and the kernel build
+  # toolchain must be present. This is the only build step; it runs under
+  # /var/lib/dkms, never /tmp, so it is unaffected by a noexec /tmp mount.
+  robust_package 'install gdrcopy dependencies' do
+    packages gdrcopy_dependencies
+  end
+
+  # Download the prebuilt packages and install them directly. No source build.
+  gdrcopy_packages.each do |package_file|
+    remote_file "#{node['cluster']['sources_dir']}/#{package_file}" do
+      source "#{gdrcopy_url_prefix}/#{package_file}"
+      mode '0644'
+      retries 3
+      retry_delay 5
+      action :create_if_missing
+    end
   end
 
   bash 'Install NVIDIA GDRCopy' do
     user 'root'
     group 'root'
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cluster']['sources_dir']
     code <<-GDRCOPY_INSTALL
     set -e
-    tar -xf #{gdrcopy_tarball}
-    cd gdrcopy-#{gdrcopy_version}/packages
-    #{installation_code}
+    #{gdrcopy_install_command}
     GDRCOPY_INSTALL
   end
 
@@ -120,6 +122,24 @@ def gdrcopy_version_extended
   "#{gdrcopy_version}-1"
 end
 
-def gdrcopy_url
-  node['cluster']['nvidia']['gdrcopy']['base_url']
+# CUDA major.minor the packages were built against (e.g. 13.0). Used both for
+# the redist path segment and, on Ubuntu, the gdrcopy-tests filename suffix.
+def gdrcopy_cuda_version
+  node['cluster']['nvidia']['cuda']['version'].split('.')[0..1].join('.')
+end
+
+# NVIDIA redist arch directory: x64 / aarch64 (note: x64, not x86_64). Same for
+# both the RHEL and Ubuntu redist trees.
+def gdrcopy_redist_arch
+  arm_instance? ? 'aarch64' : 'x64'
+end
+
+# Download prefix mirroring NVIDIA's redist tree, so the same builder works for
+# both the S3 mirror (default base_url) and NVIDIA's redist directly (when a
+# user overrides base_url to point at it):
+#   {base_url}/CUDA <major.minor>/<distro>/<arch>/<filename>
+# The space in "CUDA 13.0" is percent-encoded so the URL is valid for both S3
+# and the NVIDIA CDN.
+def gdrcopy_url_prefix
+  "#{node['cluster']['nvidia']['gdrcopy']['base_url']}/CUDA%20#{gdrcopy_cuda_version}/#{gdrcopy_redist_distro}/#{gdrcopy_redist_arch}"
 end

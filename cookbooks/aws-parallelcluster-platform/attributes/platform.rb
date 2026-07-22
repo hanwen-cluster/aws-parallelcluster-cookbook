@@ -43,9 +43,13 @@ default['cluster']['nvidia']['cuda']['version'] = '13.3.1'
 default['cluster']['nvidia']['cuda']['driver_version_suffix'] = '610.43.02'
 
 # GDRCopy
+# Installed from NVIDIA's prebuilt packages, not built from source. The artifacts
+# bucket mirrors NVIDIA's redist tree verbatim under base_url:
+#   {base_url}/CUDA <major.minor>/<distro>/<arch>/<package files>
+# Because the layout matches NVIDIA's redist, base_url can be overridden to
+# NVIDIA's redist root to pull versions that aren't mirrored to S3.
 default['cluster']['nvidia']['gdrcopy']['version'] = '2.6'
-default['cluster']['nvidia']['gdrcopy']['sha256'] = 'c9eaf0593567ac5765d04c48cf7923dacb2644240b35bb5f025edb3bde1d5b4f'
-default['cluster']['nvidia']['gdrcopy']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/gdr_copy/v#{node['cluster']['nvidia']['gdrcopy']['version']}.tar.gz"
+default['cluster']['nvidia']['gdrcopy']['base_url'] = "#{node['cluster']['artifacts_s3_url']}/dependencies/gdr_copy"
 
 # nvidia-imex
 default['cluster']['nvidia']['imex']['force_configuration'] = false

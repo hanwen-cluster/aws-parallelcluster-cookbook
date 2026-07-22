@@ -19,22 +19,8 @@ end
 use 'partial/_gdrcopy_common.rb'
 use 'partial/_gdrcopy_common_rhel.rb'
 
-def gdrcopy_enabled?
-  nvidia_enabled?
-end
-
-def gdrcopy_build_dependencies
-  if aws_region.start_with?("us-iso")
-    %w(rpm-build make check check-devel)
-  else
-    %w(dkms rpm-build make check check-devel subunit subunit-devel)
-  end
-end
-
-def gdrcopy_platform
-  "el#{node['platform_version'].to_i}"
-end
-
-def gdrcopy_arch
-  arm_instance? ? 'aarch64' : 'x86_64'
+def gdrcopy_dependencies
+  # dkms is not available in us-iso regions; there the kmod package's DKMS
+  # build is expected to be handled out of band.
+  aws_region.start_with?("us-iso") ? [] : %w(dkms)
 end
