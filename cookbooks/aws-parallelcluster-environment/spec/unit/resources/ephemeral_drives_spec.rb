@@ -24,10 +24,8 @@ describe 'ephemeral_drives:setup' do
       end
 
       it 'installs Logical Volume Manager 2 utilities' do
-        is_expected.to install_package('install Logical Volume Manager 2 utilities').with(
-          package_name: 'lvm2',
-          retries: 3,
-          retry_delay: 5
+        is_expected.to install_robust_package('install Logical Volume Manager 2 utilities').with(
+          packages: 'lvm2'
         )
       end
 

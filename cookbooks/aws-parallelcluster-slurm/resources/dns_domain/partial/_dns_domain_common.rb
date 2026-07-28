@@ -12,10 +12,7 @@ unified_mode true
 default_action :setup
 
 action :setup do
-  package "hostname" do
-    retries 3
-    retry_delay 5
-  end
+  robust_package "hostname"
 end
 
 action :configure do

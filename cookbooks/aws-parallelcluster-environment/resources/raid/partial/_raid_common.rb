@@ -18,10 +18,7 @@ property :raid_vol_array, Array, required: %i(mount unmount)
 property :mode, String, default: "1777"
 
 action :setup do
-  package 'mdadm' do
-    retries 3
-    retry_delay 5
-  end unless redhat_on_docker?
+  robust_package 'mdadm' unless redhat_on_docker?
 end
 
 action :mount do

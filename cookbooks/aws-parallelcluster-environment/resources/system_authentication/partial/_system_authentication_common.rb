@@ -20,8 +20,5 @@ action :setup do
     action :update
   end
 
-  package required_packages do
-    retries 3
-    retry_delay 5
-  end unless redhat_on_docker?
+  robust_package packages required_packages unless redhat_on_docker?
 end

@@ -8,7 +8,7 @@ describe 'aws-parallelcluster-platform::sudo_install' do
       end
 
       it 'installs sudo package' do
-        is_expected.to install_package('sudo')
+        is_expected.to install_robust_package('sudo').with(packages: 'sudo')
       end
 
       it 'creates the template with the correct attributes' do

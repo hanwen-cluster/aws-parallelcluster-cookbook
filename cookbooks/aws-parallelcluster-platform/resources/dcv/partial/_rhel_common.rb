@@ -82,10 +82,7 @@ action_class do
       retry_delay 5
     end
     # Install X Window System (required when using GPU acceleration)
-    package "xorg-x11-server-Xorg" do
-      retries 3
-      retry_delay 5
-    end
+    robust_package "xorg-x11-server-Xorg"
 
     # libvirtd service creates virtual bridge interfaces.
     # It's provided by libvirt-daemon, installed as requirement for gnome-boxes, included in @gnome.

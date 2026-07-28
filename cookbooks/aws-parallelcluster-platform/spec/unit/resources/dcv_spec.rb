@@ -497,7 +497,7 @@ describe 'dcv:setup' do
             end
           else
             is_expected.to run_execute('Install gnome desktop').with_command('yum -y install @gnome').with_retries(3).with_retry_delay(5)
-            is_expected.to install_package('xorg-x11-server-Xorg').with_retries(3).with_retry_delay(5)
+            is_expected.to install_robust_package('xorg-x11-server-Xorg').with(packages: 'xorg-x11-server-Xorg')
             is_expected.to disable_service('libvirtd').with_action(%i(disable stop))
           end
         end

@@ -20,10 +20,8 @@ unified_mode true
 default_action :setup
 
 action :setup do
-  package "install Logical Volume Manager 2 utilities" do
-    package_name "lvm2"
-    retries 3
-    retry_delay 5
+  robust_package "install Logical Volume Manager 2 utilities" do
+    packages "lvm2"
   end
 
   cookbook_file 'setup-ephemeral-drives.sh' do

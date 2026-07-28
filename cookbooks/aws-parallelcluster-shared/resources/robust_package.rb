@@ -28,11 +28,18 @@
 #     packages prerequisites
 #   end
 #
+# @example
+#   # When `packages` is omitted, the resource name is used as the package name,
+#   # mirroring the convenience of the stock Chef `package` resource.
+#   robust_package 'mdadm'
+#
 
 provides :robust_package
 unified_mode true
 
-property :packages, [String, Array], required: true, name_property: false
+# When `packages` is not specified, the resource name is used as the package
+# name (name_property), so `robust_package 'mdadm'` installs the `mdadm` package.
+property :packages, [String, Array], name_property: true
 property :max_retries, Integer, default: 10
 property :retry_delay, Integer, default: 5
 

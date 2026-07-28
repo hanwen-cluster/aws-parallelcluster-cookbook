@@ -35,7 +35,7 @@ describe 'package_repos:setup' do
         end
 
         it 'installs yum-utils' do
-          is_expected.to install_package('yum-utils').with(retries: 3).with(retry_delay: 5)
+          is_expected.to install_robust_package('yum-utils').with(packages: 'yum-utils')
         end
 
         it 'skips unavailable repos' do
@@ -63,7 +63,7 @@ describe 'package_repos:setup' do
         end
 
         it 'installs yum-utils' do
-          is_expected.to install_package('yum-utils').with(retries: 3).with(retry_delay: 5)
+          is_expected.to install_robust_package('yum-utils').with(packages: 'yum-utils')
         end
 
         it 'enables powertools' do

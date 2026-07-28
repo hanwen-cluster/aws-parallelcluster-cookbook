@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 action :lock do
-  package 'yum-plugin-versionlock'
+  robust_package 'yum-plugin-versionlock'
   execute "yum versionlock #{new_resource.package_name}" do
     retries 3
     retry_delay 5

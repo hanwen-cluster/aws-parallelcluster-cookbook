@@ -31,10 +31,7 @@ action :setup do
     include_recipe "yum-epel"
   end
 
-  package 'yum-utils' do
-    retries 3
-    retry_delay 5
-  end
+  robust_package 'yum-utils'
 
   execute 'yum-config-manager-rhel' do
     # Needed by hwloc-devel blas-devel libedit-devel and glibc-static packages

@@ -38,10 +38,7 @@ action :setup do
   end
   include_recipe "yum-epel"
 
-  package 'yum-utils' do
-    retries 3
-    retry_delay 5
-  end
+  robust_package 'yum-utils'
 
   execute 'yum-config-manager-powertools' do
     # Needed by hwloc-devel blas-devel libedit-devel and glibc-static packages

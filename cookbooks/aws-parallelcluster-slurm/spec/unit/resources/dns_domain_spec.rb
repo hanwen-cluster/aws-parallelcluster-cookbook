@@ -31,7 +31,7 @@ describe 'dns_domain:setup' do
       end
 
       it 'installs hostname package' do
-        is_expected.to install_package('hostname').with_retries(3).with_retry_delay(5)
+        is_expected.to install_robust_package('hostname').with(packages: 'hostname')
       end
     end
   end
