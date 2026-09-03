@@ -8,8 +8,13 @@
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 # limitations under the License.
+import json
+import os
+import shutil
+
 import pytest
 from assertpy import assert_that
+from cloudwatch_agent_common_utils import render_jinja_template
 from write_cloudwatch_agent_json import (
     add_aggregation_dimensions,
     add_append_dimensions,
@@ -150,6 +155,39 @@ def test_filter_output_fields():
     configs = filter_output_fields(CONFIGS)
     for config in configs:
         assert_that(config).does_not_contain_key("schedulers")
+
+
+def test_filter_output_fields_preserves_timezone():
+    """The timezone field must reach the CloudWatch agent config, it is not an internal-only field."""
+    configs = filter_output_fields([dict(CONFIGS[0], timezone="UTC")])
+    assert_that(configs[0]).contains_entry({"timezone": "UTC"})
+
+
+def test_events_log_configs_are_pinned_to_utc(tmpdir):
+    """
+    Log files written by the ParallelCluster event publishers always carry UTC timestamps.
+
+    The CloudWatch agent defaults to interpreting timestamps in the node's local timezone, so these
+    entries must pin "timezone": "UTC". Every other entry reads a log written in local time and must
+    not pin a timezone, otherwise its timestamps would be misparsed on a node whose timezone is not UTC.
+    """
+    template = os.path.join(
+        os.path.dirname(__file__),
+        "../../../cookbooks/aws-parallelcluster-environment/files/cloudwatch/cloudwatch_agent_config.json",
+    )
+    # render_jinja_template rewrites the file in place, so render a copy
+    rendered = os.path.join(tmpdir, "cloudwatch_agent_config.json")
+    shutil.copyfile(template, rendered)
+    with open(render_jinja_template(rendered), encoding="utf-8") as config_file:
+        log_configs = json.load(config_file)["log_configs"]
+
+    events_configs = [config for config in log_configs if config["file_path"].endswith(".events")]
+    assert_that(events_configs).is_not_empty()
+    for config in events_configs:
+        assert_that(config).described_as(config["file_path"]).contains_entry({"timezone": "UTC"})
+    for config in log_configs:
+        if not config["file_path"].endswith(".events"):
+            assert_that(config).described_as(config["file_path"]).does_not_contain_key("timezone")
 
 
 def test_create_config():

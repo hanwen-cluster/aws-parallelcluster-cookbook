@@ -8,6 +8,7 @@
         "type": "object",
         "properties": {
           "timestamp_format_key": {"type": "string"},
+          "timezone": {"type": "string", "enum": ["UTC", "Local"]},
           "file_path": {"type": "string"},
           "log_stream_name": {"type": "string"},
           "schedulers": {
