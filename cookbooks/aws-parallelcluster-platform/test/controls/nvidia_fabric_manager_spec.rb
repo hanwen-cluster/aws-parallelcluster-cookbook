@@ -15,10 +15,6 @@ control 'tag:install_expected_versions_of_nvidia_fabric_manager_installed' do
   describe package(node['cluster']['nvidia']['fabricmanager']['package']) do
     it { should be_installed }
   end
-
-  describe service('nvidia-fabricmanager') do
-    it { should_not be_enabled }
-  end
 end
 
 control 'tag:config_nvidia_fabric_manager_enabled' do

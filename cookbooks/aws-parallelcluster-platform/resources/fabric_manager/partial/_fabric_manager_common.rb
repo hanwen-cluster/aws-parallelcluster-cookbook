@@ -31,12 +31,6 @@ action :setup do
   end
 
   package_lock fabric_manager_package
-
-  # The NVIDIA driver package enables the service through its systemd preset.
-  # Keep it disabled in the image: the configure action enables it only where Fabric Manager is needed.
-  service fabric_manager_service do
-    action :disable
-  end
 end
 
 action :configure do
