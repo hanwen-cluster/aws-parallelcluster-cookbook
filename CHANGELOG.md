@@ -17,6 +17,10 @@ This file is used to list changes made in each version of the AWS ParallelCluste
   (launch templates, security groups, subnets and their routing, IAM roles and policies, custom action scripts,
   existing shared storage), warning about the ones the credentials do not allow reading.
 
+**BUG FIXES**
+- Fix the download of the CUDA local-repo installer for CUDA 13.4 and later, whose file name no longer contains
+  the NVIDIA driver version.
+
 3.16.2
 ------
 
