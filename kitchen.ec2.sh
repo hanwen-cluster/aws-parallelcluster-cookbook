@@ -44,6 +44,9 @@
 # KITCHEN_UBUNTU2404_AMI:       specific AMI to use for ubuntu24.04
 #                             if not specified, will look for the latest suitable ParallelCluster AMI
 #
+# KITCHEN_UBUNTU2604_AMI:       specific AMI to use for ubuntu26.04
+#                             if not specified, will look for the latest suitable ParallelCluster AMI
+#
 # KITCHEN_UBUNTU2204_AMI:       specific AMI to use for ubuntu22.04
 #                             if not specified, will look for the latest suitable ParallelCluster AMI
 #
